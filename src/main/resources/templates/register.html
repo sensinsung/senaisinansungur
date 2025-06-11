@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <meta charset="UTF-8">
+    <title>Kayıt Ol</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Kayıt Ol</h2>
+                        <div th:if="${param.error}" class="alert alert-danger mb-3" role="alert">
+                            <div th:each="error : ${#strings.arraySplit(param.error, ',')}">
+                                <span th:text="${error}"></span>
+                            </div>
+                        </div>
+                        <form th:action="@{/register}" method="post" class="needs-validation" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="" required
+                                    pattern="^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{2,50}$">
+                                <label for="firstName">Ad</label>
+                                <div class="invalid-feedback">
+                                    Lütfen geçerli bir ad girin (2-50 karakter).
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="" required
+                                    pattern="^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{2,50}$">
+                                <label for="lastName">Soyad</label>
+                                <div class="invalid-feedback">
+                                    Lütfen geçerli bir soyad girin (2-50 karakter).
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="username-addon">&#64;</span>
+                                    <div class="form-floating flex-grow-1">
+                                        <input type="text" class="form-control" id="username" name="username" placeholder="" required
+                                            pattern="^[a-zA-Z0-9_]{3,20}$">
+                                        <label for="username">Kullanıcı Adı</label>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Kullanıcı adı 3-20 karakter arasında olmalı ve sadece harf, rakam ve alt çizgi içermelidir.
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="email-addon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
+                                        </svg>
+                                    </span>
+                                    <div class="form-floating flex-grow-1">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="" required>
+                                        <label for="email">E-posta</label>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Lütfen geçerli bir e-posta adresi girin.
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="password" id="password" name="password" class="form-control" placeholder="" 
+                                    minlength="8" maxlength="20" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$" 
+                                    onkeypress="return event.charCode != 32" required>
+                                <label for="password">Şifre</label>
+                                <div class="invalid-feedback">
+                                    8-20 karakter uzunluğunda olmalıdır. En az bir harf ve bir rakam içermelidir. Boşluk karakteri kullanılamaz.
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="" 
+                                    minlength="8" maxlength="20" onkeypress="return event.charCode != 32" required>
+                                <label for="confirmPassword">Şifre Tekrar</label>
+                                <div class="invalid-feedback">
+                                    Şifrenizi tekrar girin.
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>Zaten hesabınız var mı? <a th:href="@{/login}" class="text-decoration-none">Giriş Yap</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/register.js}"></script>
+</body>
+</html> 

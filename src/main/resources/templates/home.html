@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+    <title>Anasayfa</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart@latest/css/emoji-mart.css">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body> 
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card mb-4" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <div class="card-body">
+                        <form id="postForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="content" rows="3" placeholder="Ne düşünüyorsun?"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="dropdown me-2">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="privacyDropdown" data-bs-toggle="dropdown">
+                                            <i class="bi bi-globe"></i> <span class="privacy-text">Herkese Açık</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" data-privacy-id="1" data-privacy-name="Herkese Açık"><i class="bi bi-globe"></i> Herkese Açık</a></li>
+                                            <li><a class="dropdown-item" href="#" data-privacy-id="2" data-privacy-name="Sadece Takipçiler"><i class="bi bi-people"></i> Sadece Takipçiler</a></li>
+                                            <li><a class="dropdown-item" href="#" data-privacy-id="3" data-privacy-name="Sadece Ben"><i class="bi bi-lock"></i> Sadece Ben</a></li>
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" name="privacyType" value="1">
+                                    <div class="flex-grow-1">
+                                        <label for="photoInput" class="btn btn-outline-primary me-2">
+                                            <i class="bi bi-image"></i> Fotoğraf Ekle
+                                        </label>
+                                        <input type="file" id="photoInput" name="photos" multiple accept="image/*" class="d-none">
+                                        <button type="button" id="removePhotoBtn" class="btn btn-outline-danger d-none">
+                                            <i class="bi bi-x-circle"></i> Fotoğrafları Kaldır
+                                        </button>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Paylaş</button>
+                                </div>
+                                <div id="photoPreview" class="mt-2"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="postsList">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPostModalLabel">Gönderiyi Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPostForm">
+                        <input type="hidden" id="editPostId" name="postId">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="editPostContent" name="content" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="editPrivacyDropdown" data-bs-toggle="dropdown">
+                                    <i class="bi bi-globe"></i> <span class="edit-privacy-text">Herkese Açık</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-privacy-id="1" data-privacy-name="Herkese Açık"><i class="bi bi-globe"></i> Herkese Açık</a></li>
+                                    <li><a class="dropdown-item" href="#" data-privacy-id="2" data-privacy-name="Sadece Takipçiler"><i class="bi bi-people"></i> Sadece Takipçiler</a></li>
+                                    <li><a class="dropdown-item" href="#" data-privacy-id="3" data-privacy-name="Sadece Ben"><i class="bi bi-lock"></i> Sadece Ben</a></li>
+                                </ul>
+                            </div>
+                            <input type="hidden" id="editPrivacyType" name="privacyType" value="1">
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center">
+                                <label for="editPhotoInput" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-image"></i> Fotoğraf Ekle
+                                </label>
+                                <input type="file" id="editPhotoInput" name="photos" multiple accept="image/*" class="d-none">
+                                <button type="button" id="editRemovePhotoBtn" class="btn btn-outline-danger d-none">
+                                    <i class="bi bi-x-circle"></i> Fotoğrafları Kaldır
+                                </button>
+                            </div>
+                            <div id="editPhotoPreview" class="mt-2"></div>
+                            <div id="editExistingPhotos" class="mt-2"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePost()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentsModalLabel">Yorumlar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm" class="mb-4">
+                        <div class="form-group">
+                            <textarea class="form-control" name="content" rows="2" placeholder="Yorumunuzu yazın..."></textarea>
+                        </div>
+                        <input type="hidden" name="postId" id="commentPostId">
+                        <button type="submit" class="btn btn-primary mt-2">Yorum Yap</button>
+                    </form>
+                    <div id="commentsList">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/time-ago.js}"></script>
+    <script th:src="@{/js/post.js}"></script>
+    <script>
+        function handleLogout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/logout';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</body>
+</html> 

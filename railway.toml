@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+buildCommand = "mvn clean package"
+
+[deploy]
+startCommand = "java -jar target/senaisinansungur-1.0-SNAPSHOT.jar"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 3 

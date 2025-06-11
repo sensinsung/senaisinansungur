@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: header}">
+    <title>Ayarlar</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Profil Fotoğrafı</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/ayarlar/foto-yukle}" method="post" enctype="multipart/form-data">
+                            <div class="text-center mb-4">
+                                <div class="position-relative d-inline-block">
+                                    <img th:if="${user.profilePicture != null}" th:src="@{'/uploads/profile-photos/' + ${user.userid}}" 
+                                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;"
+                                         alt="Profil Fotoğrafı">
+                                    <img th:unless="${user.profilePicture != null}" src="/img/default-profile.svg" 
+                                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;"
+                                         alt="Varsayılan Profil Fotoğrafı">
+                                    <div class="position-absolute bottom-0 end-0">
+                                        <label for="profilePhoto" class="btn btn-light btn-sm rounded-circle shadow-sm">
+                                            <i class="bi bi-camera"></i>
+                                        </label>
+                                        <input type="file" class="d-none" id="profilePhoto" name="profilePhoto" 
+                                               accept="image/*" onchange="this.form.submit()">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Şifre Değiştir</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/ayarlar/sifre-degistir}" method="post" id="passwordForm">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Mevcut Şifre</label>
+                                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">Yeni Şifre</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" 
+                                       minlength="8" maxlength="20" required>
+                                <div class="form-text">Şifreniz en az 8 karakter uzunluğunda olmalıdır.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Yeni Şifre (Tekrar)</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                       minlength="8" maxlength="20" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-key me-2"></i>Şifreyi Değiştir
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Profil Gizliliği</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/ayarlar/gizlilik-ayarla}" method="post" id="privacyForm">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isPrivate" name="isPrivate" 
+                                       th:checked="${user.isPrivate}" onchange="this.form.submit()">
+                                <label class="form-check-label" for="isPrivate">Gizli Profil</label>
+                            </div>
+                            <div class="form-text mt-2">
+                                Gizli profil seçeneği aktif olduğunda, kullanıcılar sizi takip etmek için onayınızı bekleyecektir.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('Yeni şifreler eşleşmiyor!');
+                return;
+            }
+            
+            this.submit();
+        });
+    </script>
+</body>
+</html> 
