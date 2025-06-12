@@ -18,6 +18,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .requiresChannel(channel -> channel
+                .anyRequest().requiresSecure()
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/lib/**", "/img/**", "/uploads/**").permitAll()
                 .requestMatchers("/profil", "/ayarlar").authenticated()
@@ -35,7 +38,7 @@ public class SecurityConfig {
                 .tokenValiditySeconds(86400 * 30)
                 .alwaysRemember(false)
                 .rememberMeParameter("rememberMe")
-                .useSecureCookie(false)
+                .useSecureCookie(true)
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
