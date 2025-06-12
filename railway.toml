@@ -4,7 +4,7 @@ dockerfilePath = "Dockerfile"
 buildCommand = "mvn clean package -DskipTests"
 
 [deploy]
-startCommand = "java -jar target/*.jar"
+startCommand = "java -jar app.jar"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
