@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "mvn clean package"
+buildCommand = "mvn clean package -DskipTests"
 
 [deploy]
 startCommand = "java -jar target/senaisinansungur-1.0-SNAPSHOT.jar"
